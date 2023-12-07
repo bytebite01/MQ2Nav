@@ -276,7 +276,7 @@ void NavMeshTool::handleTools()
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 100);
 		if (ImGuiEx::ColoredButton("Reset Settings", ImVec2(100, 0), 0.0))
 		{
-			m_config = NavMeshConfig{};
+			resetCommonSettings();			
 		}
 
 		if (ImGui::TreeNodeEx("Tiling", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
@@ -682,6 +682,99 @@ void NavMeshTool::setOutputPath(const char* output_path)
 void NavMeshTool::resetCommonSettings()
 {
 	m_config = NavMeshConfig{};
+
+	// Construct the path to the ini file
+	// Use something other than max path but 260 is solid number for now
+	CHAR fullPath[MAX_PATH] = { 0 };
+	GetModuleFileNameA(NULL, fullPath, MAX_PATH);
+	PathRemoveFileSpecA(fullPath);
+	PathAppendA(fullPath, "\\config\\MeshGenerator.ini");
+
+	//tileSize = 256
+	CHAR strTileSize[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "tileSize", "", strTileSize, MAX_PATH, fullPath))
+	{
+		m_config.tileSize = std::stof(strTileSize);
+	}
+
+	//cellSize = 0.5f
+	CHAR strCellSize[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "cellSize", "", strCellSize, MAX_PATH, fullPath))
+	{
+		m_config.cellSize = std::stof(strCellSize);
+	}
+	//cellHeight = 0.250f
+	CHAR strCellHeight[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "cellHeight", "", strCellHeight, MAX_PATH, fullPath))
+	{
+		m_config.cellHeight = std::stof(strCellHeight);
+	}
+	//agentHeight = 6.0f
+	CHAR strAgentHeight[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "agentHeight", "", strAgentHeight, MAX_PATH, fullPath))
+	{
+		m_config.agentHeight = std::stof(strAgentHeight);
+	}
+	//agentRadius = 3.0f
+	CHAR strAgentRadius[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "agentRadius", "", strAgentRadius, MAX_PATH, fullPath))
+	{
+		m_config.agentRadius = std::stof(strAgentRadius);
+	}
+	//agentMaxClimb = 3.0f
+	CHAR strAgentMaxClimb[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "agentMaxClimb", "", strAgentMaxClimb, MAX_PATH, fullPath))
+	{
+		m_config.agentMaxClimb = std::stof(strAgentMaxClimb);
+	}
+	//agentMaxSlope = 70.0f
+	CHAR strAgentMaxSlope[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "agentMaxSlope", "", strAgentMaxSlope, MAX_PATH, fullPath))
+	{
+		m_config.agentMaxSlope = std::stof(strAgentMaxSlope);
+	}
+	//regionMinSize = 8
+	CHAR strRegionMinSize[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "regionMinSize", "", strRegionMinSize, MAX_PATH, fullPath))
+	{
+		m_config.regionMinSize = std::stof(strRegionMinSize);
+	}
+	//regionMergeSize = 20
+	CHAR strRegionMergeSize[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "regionMergeSize", "", strRegionMergeSize, MAX_PATH, fullPath))
+	{
+		m_config.regionMergeSize = std::stof(strRegionMergeSize);
+	}
+	//edgeMaxLen = 12.0f
+	CHAR strEdgeMaxLen[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "edgeMaxLen", "", strEdgeMaxLen, MAX_PATH, fullPath))
+	{
+		m_config.edgeMaxLen = std::stof(strEdgeMaxLen);
+	}
+	//edgeMaxError = 1.3f
+	CHAR strEdgeMaxError[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "edgeMaxError", "", strEdgeMaxError, MAX_PATH, fullPath))
+	{
+		m_config.edgeMaxError = std::stof(strEdgeMaxError);
+	}
+	//vertsPerPoly = 6.0f
+	CHAR strVertsPerPoly[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "vertsPerPoly", "", strVertsPerPoly, MAX_PATH, fullPath))
+	{
+		m_config.vertsPerPoly = std::stof(strVertsPerPoly);
+	}
+	//detailSampleDist = 6.0f
+	CHAR strDetailSampleDist[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "detailSampleDist", "", strDetailSampleDist, MAX_PATH, fullPath))
+	{
+		m_config.detailSampleDist = std::stof(strDetailSampleDist);
+	}
+	//detailSampleMaxError = 1.0f
+	CHAR strDetailSampleMaxError[MAX_PATH] = { 0 };
+	if (GetPrivateProfileStringA("Defaults-NavMeshTool", "detailSampleMaxError", "", strDetailSampleMaxError, MAX_PATH, fullPath))
+	{
+		m_config.detailSampleMaxError = std::stof(strDetailSampleMaxError);
+	}
 	m_navMeshDrawFlags = DU_DRAWNAVMESH_OFFMESHCONS | DU_DRAWNAVMESH_CLOSEDLIST;
 }
 
