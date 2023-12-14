@@ -14,6 +14,14 @@ EQEmu::EQGModelLoader::~EQGModelLoader() {
 bool EQEmu::EQGModelLoader::Load(EQEmu::PFS::Archive &archive, std::string model, std::shared_ptr<EQG::Geometry>& model_out) {
 	eqLogMessage(LogTrace, "Loading model %s.", model.c_str());
 	std::vector<char> buffer;
+
+	// Comment this section out to revert to current implementation.
+	std::string collisionName = model.substr(0, model.size() - 4) + "_col.mod";
+	if (archive.Exists(collisionName)) {
+		model = collisionName;
+	}
+	// End changes.
+
 	if(!archive.Get(model, buffer)) {
 		eqLogMessage(LogError, "Unable to load %s, file was not found.", model.c_str());
 		return false;
