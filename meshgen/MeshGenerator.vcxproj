@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AppPostOffice.cpp" />
     <ClCompile Include="ChunkyTriMesh.cpp" />
     <ClCompile Include="ConvexVolumeTool.cpp" />
     <ClCompile Include="EQConfig.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="ZonePicker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppPostOffice.h" />
     <ClInclude Include="ChunkyTriMesh.h" />
     <ClInclude Include="ConvexVolumeTool.h" />
     <ClInclude Include="DebugDraw.h" />

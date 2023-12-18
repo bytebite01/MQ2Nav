@@ -32,6 +32,9 @@
 #include <filesystem>
 #include <sstream>
 
+#include "AppPostOffice.h"
+
+
 #pragma warning(push)
 #pragma warning(disable: 4244)
 
@@ -40,6 +43,21 @@ namespace fs = std::filesystem;
 //============================================================================
 
 static const int32_t MAX_LOG_MESSAGES = 1000;
+
+mq::postoffice::Dropbox myDropbox;
+mq::postoffice::Dropbox myDropboxLua;
+bool dropBoxInitDone = false;
+
+constexpr int GAMESTATE_PRECHARSELECT = -1;
+constexpr int GAMESTATE_CHARSELECT = 1;
+constexpr int GAMESTATE_CHARCREATE = 2;
+constexpr int GAMESTATE_POSTCHARSELECT = 3;
+constexpr int GAMESTATE_SOMETHING = 4;
+constexpr int GAMESTATE_INGAME = 5;
+constexpr int GAMESTATE_LOGGINGIN = 253;
+constexpr int GAMESTATE_UNLOADING = 255;
+int oldGameState = -1;
+int newGameState = -1;
 
 static bool IsKeyboardBlocked() {
 	return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantTextInput;
@@ -85,6 +103,31 @@ private:
 	std::shared_ptr<spdlog::logger> m_logger;
 };
 
+void TestReceiveCallback(mq::ProtoMessagePtr&& message) {
+	if (message && message->GetHeader()) {
+		//Right now we're only sending std::string, so we know it's a string and we'll just write it out.
+		//Your plugin should determine what was sent, and then read it appropriately. Writing is just showing it was received.
+		// LOG HERE
+
+		//PONG - Not needed, we're just verifying we got it.
+		//This would populate in ActorTestResponseCallback.
+		//message is the message we just received
+		//received is an std::string we're sending to them
+		//and the int value at the end is a custom response status.
+		//You can enumerate this based on logic from the message you received here.
+		//In this case we're using 0. This number should be a non-negative value.
+		std::string received = "Received header.";
+		eqLogMessage(LogError, "Received Header length: %d", message->GetHeader()->messageLength);
+		auto conId = message->GetConnectionId();
+		std::optional<std::string> data;
+		if (message->size() > 0)
+			data = std::string(message->get<char>(), message->size());
+		eqLogMessage(LogError, "Received Data String: %s", data->c_str());
+
+	}
+}
+
+
 //============================================================================
 
 Application::Application(const std::string& defaultZone)
@@ -125,6 +168,16 @@ Application::Application(const std::string& defaultZone)
 	m_meshTool->setContext(m_rcContext.get());
 	m_meshTool->setOutputPath(m_eqConfig.GetOutputPath().c_str());
 
+
+	
+	
+	static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).Initialize();
+
+	static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).SetGameStatePostOffice(0);
+
+	static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).ProcessPipeClient();
+
+	
 	InitializeWindow();
 }
 
@@ -345,6 +398,24 @@ int Application::RunMainLoop()
 			m_loadMeshOnZone = false;
 			m_nextZoneToLoad.clear();
 		}
+
+		
+		static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).ProcessPipeClient();
+		
+
+		//If I have geometry, try to add a listener
+		if (m_geom) {
+			//using ReceiveCallback = std::function<void(ProtoMessagePtr&&)>;
+			//using ReceiveCallback = std::function<void(const std::shared_ptr<Message>&)>;
+			if (!dropBoxInitDone) {
+				myDropbox = static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).RegisterAddress("meshgen", TestReceiveCallback);
+				myDropboxLua = static_cast<mq::AppPostOffice&>(mq::postoffice::GetPostOffice()).RegisterAddress("lua", TestReceiveCallback);
+				dropBoxInitDone = true;
+				
+			}
+
+		}
+
 	}
 
 	Halt();
