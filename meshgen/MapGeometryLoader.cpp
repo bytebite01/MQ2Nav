@@ -88,6 +88,11 @@ void MapGeometryLoader::SetMaxExtents(const std::pair<glm::vec3, glm::vec3>& max
 	m_maxExtentsSet = true;
 }
 
+void MapGeometryLoader::SetApplyCollisionFix(bool applyCollisionFix)
+{
+	m_applyCollisionFix = applyCollisionFix;
+}
+
 void MapGeometryLoader::addVertex(float x, float y, float z)
 {
 	if (m_vertCount + 1 > vcap)
@@ -599,6 +604,8 @@ bool MapGeometryLoader::Build()
 	std::string filePath = m_eqPath + "\\" + m_zoneName;
 
 	EQEmu::EQGLoader eqg;
+	eqg.SetApplyCollisionFix(m_applyCollisionFix);
+
 	std::vector<std::shared_ptr<EQEmu::EQG::Geometry>> eqg_models;
 	std::vector<std::shared_ptr<EQEmu::Placeable>> eqg_placables;
 	std::vector<std::shared_ptr<EQEmu::EQG::Region>> eqg_regions;

@@ -21,10 +21,14 @@ public:
 	~EQGLoader();
 	bool Load(std::string file, std::vector<std::shared_ptr<EQG::Geometry>> &models, std::vector<std::shared_ptr<Placeable>> &placeables,
 		std::vector<std::shared_ptr<EQG::Region>> &regions, std::vector<std::shared_ptr<Light>> &lights);
+
+	void SetApplyCollisionFix(bool applyCollisionFix);
+	bool GetApplyCollisionFix();
 private:
 	bool GetZon(std::string file, std::vector<char> &buffer);
 	bool ParseZon(EQEmu::PFS::Archive &archive, std::vector<char> &buffer, std::vector<std::shared_ptr<EQG::Geometry>> &models, std::vector<std::shared_ptr<Placeable>> &placeables,
 		std::vector<std::shared_ptr<EQG::Region>> &regions, std::vector<std::shared_ptr<Light>> &lights);
+	bool m_applyCollisionFix = false;
 };
 
 }

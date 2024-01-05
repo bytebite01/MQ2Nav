@@ -42,6 +42,7 @@ public:
 	~MapGeometryLoader();
 
 	void SetMaxExtents(const std::pair<glm::vec3, glm::vec3>& maxExtents);
+	void SetApplyCollisionFix(bool applyCollisionFix);
 
 	bool load();
 
@@ -55,6 +56,8 @@ public:
 
 	inline int GetDynamicObjectsCount() const { return m_dynamicObjects; }
 	inline bool HasDynamicObjects() const { return m_hasDynamicObjects; }
+
+	bool getApplyCollisionFix() const { return m_applyCollisionFix; }
 
 private:
 	bool Build();
@@ -95,6 +98,7 @@ private:
 
 	int m_dynamicObjects = 0;
 	bool m_hasDynamicObjects = false;
+	bool m_applyCollisionFix = false;
 
 	struct ModelEntry
 	{

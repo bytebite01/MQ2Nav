@@ -337,12 +337,13 @@ int Application::RunMainLoop()
 		// Load a zone if a zone load was requested
 		if (!m_nextZoneToLoad.empty())
 		{
-			PushEvent([zone = m_nextZoneToLoad, loadMesh = m_loadMeshOnZone, this]()
+			PushEvent([zone = m_nextZoneToLoad, loadMesh = m_loadMeshOnZone, replaceCollidables = m_replaceCollidables, this]()
 			{
-				LoadGeometry(zone, loadMesh);
+				LoadGeometry(zone, loadMesh, replaceCollidables);
 			});
 
 			m_loadMeshOnZone = false;
+			m_replaceCollidables = false;
 			m_nextZoneToLoad.clear();
 		}
 	}
@@ -969,6 +970,7 @@ void Application::ShowZonePickerDialog()
 		}
 		if (m_zonePicker->Show(focus, &m_nextZoneToLoad)) {
 			m_loadMeshOnZone = m_zonePicker->ShouldLoadNavMesh();
+			m_replaceCollidables = m_zonePicker->ShouldReplaceCollidables();
 			m_showZonePickerDialog = false;
 		}
 	}
@@ -1189,7 +1191,7 @@ void Application::Halt()
 	m_meshTool->CancelBuildAllTiles();
 }
 
-void Application::LoadGeometry(const std::string& zoneShortName, bool loadMesh)
+void Application::LoadGeometry(const std::string& zoneShortName, bool loadMesh, bool replaceCollidables)
 {
 	std::unique_lock<std::mutex> lock(m_renderMutex);
 
@@ -1212,6 +1214,8 @@ void Application::LoadGeometry(const std::string& zoneShortName, bool loadMesh)
 		}
 	}
 
+	geomLoader->SetApplyCollisionFix(replaceCollidables);
+	
 	if (!ptr->loadGeometry(std::move(geomLoader), m_rcContext.get()))
 	{
 		m_showFailedToLoadZone = true;

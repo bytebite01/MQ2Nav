@@ -281,6 +281,9 @@ bool ZonePicker::Show(bool focus, std::string* selected_zone /* = nullptr */)
 
 		ImGui::SameLine();
 		ImGui::Checkbox("Load Navmesh if available", &m_loadNavMesh);
+		
+		ImGui::SameLine();
+		ImGui::Checkbox("BETA: Attempt to replace collision models", &m_replaceCollidables);
 
 	}
 	ImGui::End();

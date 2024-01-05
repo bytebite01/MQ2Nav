@@ -27,6 +27,8 @@ public:
 
 	bool ShouldLoadNavMesh() const { return m_loadNavMesh; }
 
+	bool ShouldReplaceCollidables() const { return m_replaceCollidables; }
+
 private:
 	// Mapping of Zones to Expansions
 	using ZoneCollection = std::map<std::string, std::string>;
@@ -37,6 +39,7 @@ private:
 	char m_filterText[64] = { 0 };
 
 	bool m_loadNavMesh = true;
+	bool m_replaceCollidables = false;
 	bool m_batchMode = false;
 
 	std::vector<IMAGEDATA> m_tgaData;

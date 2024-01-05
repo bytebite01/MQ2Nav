@@ -56,6 +56,15 @@ bool EQEmu::EQGLoader::Load(std::string file, std::vector<std::shared_ptr<EQG::G
 	return true;
 }
 
+void EQEmu::EQGLoader::SetApplyCollisionFix(bool applyCollisionFix) 
+{
+	m_applyCollisionFix = applyCollisionFix;
+}
+bool EQEmu::EQGLoader::GetApplyCollisionFix()
+{
+	return m_applyCollisionFix;
+}
+
 bool EQEmu::EQGLoader::GetZon(std::string file, std::vector<char> &buffer) {
 	buffer.clear();
 	FILE *f = _fsopen(file.c_str(), "rb", _SH_DENYNO);
@@ -115,6 +124,14 @@ bool EQEmu::EQGLoader::ParseZon(EQEmu::PFS::Archive &archive, std::vector<char> 
 		std::string mod = model_names[i];
 		std::shared_ptr<EQG::Geometry> m(new EQG::Geometry());
 		m->SetName(mod);
+		
+		if (m_applyCollisionFix) {
+			std::string collisionName = mod.substr(0, mod.size() - 4) + "_col.mod";
+			if (archive.Exists(collisionName)) {
+				mod = collisionName;
+			}
+		}
+
 		if(model_loader.Load(archive, mod, m)) {
 			models.push_back(m);
 		} 

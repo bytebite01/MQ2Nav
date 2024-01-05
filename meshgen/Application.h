@@ -136,7 +136,7 @@ private:
 	void DispatchCallbacks();
 
 	// Load a zone's geometry given its shortname.
-	void LoadGeometry(const std::string& zoneShortName, bool loadMesh);
+	void LoadGeometry(const std::string& zoneShortName, bool loadMesh, bool replaceCollidables);
 	void Halt();
 
 	// Reset the camera to the starting point
@@ -244,6 +244,7 @@ private:
 	// zone to load on next pass
 	std::string m_nextZoneToLoad;
 	bool m_loadMeshOnZone = false;
+	bool m_replaceCollidables = false;
 
 	// The main window surface
 	SDL_Window* m_window = nullptr;
