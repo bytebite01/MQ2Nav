@@ -11,7 +11,7 @@
 #include "meshgen/ZonePicker.h"
 #include "meshgen/resource.h"
 #include "meshgen/imgui/imgui_impl_opengl2.h"
-#include "meshgen/imgui/imgui_impl_sdl.h"
+#include "meshgen/imgui/imgui_impl_sdl2.h"
 #include "common/Utilities.h"
 
 #include "imgui/ImGuiUtils.h"
@@ -273,7 +273,7 @@ int Application::RunMainLoop()
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(50.0f, (float)m_width / (float)m_height, 1.0f, m_camr);
+		gluPerspective(50.0f, (float)m_width / (float)m_height, m_camf, m_camr);
 
 		// set up modelview matrix
 		glMatrixMode(GL_MODELVIEW);
@@ -302,7 +302,7 @@ int Application::RunMainLoop()
 
 		// Start the ImGui Frame
 		ImGui_ImplOpenGL2_NewFrame();
-		ImGui_ImplSDL2_NewFrame(m_window);
+		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
 		RenderInterface();
